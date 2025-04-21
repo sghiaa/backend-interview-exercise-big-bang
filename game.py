@@ -1,4 +1,21 @@
 import random
+import json
+import os
+
+SCORE_FILE = "scoreboard.json"
+
+def load_score():
+    if os.path.exists(SCORE_FILE):
+        with open(SCORE_FILE, "r") as f:
+            return json.load(f)
+    return {
+        "You": {"wins": 0, "losses": 0, "ties": 0},
+        "Computer": {"wins": 0, "losses": 0, "ties": 0},
+    }
+
+def save_score(score):
+    with open(SCORE_FILE, "w") as f:
+        json.dump(score, f, indent=2)
 
 RULES = {
     "rock": ["scissors", "lizard"],
@@ -57,10 +74,7 @@ def print_score(score):
 def main():
     print("Welcome to Rock Paper Scissors Lizard Spock!")
 
-    score = {
-        "You": {"wins": 0, "losses": 0, "ties": 0},
-        "Computer": {"wins": 0, "losses": 0, "ties": 0},
-    }
+    score = load_score()
 
     while True:
         result = play_round()
@@ -80,6 +94,7 @@ def main():
             score["Computer"]["wins"] += 1
 
         print_score(score)
+        save_score(score)
 
         again = input("\nPlay again? (y/n): ").strip().lower()
         if again != "y":
